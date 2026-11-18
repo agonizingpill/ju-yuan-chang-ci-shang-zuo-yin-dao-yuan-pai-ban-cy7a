@@ -6,3 +6,4 @@ DEBRIEF_STATES=('draft','archived')
 
 INCIDENT_STATES=('open','assigned','resolved','closed')
 ITEM_STATES=('stored','handed_over')
+CLOSURE_STATES=('pending','active','rejected')

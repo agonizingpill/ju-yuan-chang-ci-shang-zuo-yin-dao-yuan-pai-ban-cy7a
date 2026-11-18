@@ -9,6 +9,10 @@ class ZoneInput(BaseModel):
 class PostInput(BaseModel):
     assignment_id:int
     zone_id:int
+class ClosurePlanInput(BaseModel):
+    performance_id:int
+    zone_id:int
+    reason:str=Field(min_length=4,max_length=500,pattern=r'\S')
 class IncidentInput(BaseModel):
     performance_id:int
     zone_id:int

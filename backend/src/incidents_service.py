@@ -5,13 +5,13 @@ from .zone_models import EntranceZone
 from .staff_models import CrewAssignment
 from .models import CrewCall
 from .debrief_models import ShowDebrief
-from .zones_service import performance_context
+from .zones_service import performance_context,production_lock
 from .staff_service import locked
 from .services import pack,audit
 
 def view(s,x):return pack(x)|{'zone_code':s.get(EntranceZone,x.zone_id).code}
 def create(s,d,u):
-    c,p,prod=performance_context(s,d.performance_id)
+    c,p,prod=performance_context(s,d.performance_id);production_lock(s,prod.id)
     if s.scalar(select(ShowDebrief.id).where(ShowDebrief.performance_id==p.id,ShowDebrief.state=='archived')):raise HTTPException(409,'本场交接已归档，不能追加现场事件')
     z=locked(s,EntranceZone,d.zone_id)
     if z.production_id!=p.production_id or not z.active:raise HTTPException(409,'事件分区不属于本场或未启用')

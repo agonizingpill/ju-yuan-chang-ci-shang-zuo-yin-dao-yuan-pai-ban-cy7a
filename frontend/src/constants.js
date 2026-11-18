@@ -4,3 +4,5 @@ export const STATES={observed:'已验票',scheduled:'待预测',forecasted:'待�
 export const DEBRIEF_STATES={draft:'待经理归档',archived:'已归档冻结'};
 
 export const INCIDENT_STATES={open:'待分派',assigned:'处置中',resolved:'待经理复核',closed:'已关闭'};
+
+export const CLOSURE_STATES={pending:'待生效',active:'已生效',rejected:'已拒绝'};

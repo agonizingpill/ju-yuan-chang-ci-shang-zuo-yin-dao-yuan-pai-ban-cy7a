@@ -2,10 +2,10 @@ from fastapi import APIRouter,Depends
 from sqlalchemy import select
 from .db import db_session
 from .auth import current,writers,admin
-from .zone_models import EntranceZone,ZonePost
+from .zone_models import EntranceZone,ZonePost,ZoneClosurePlan
 from .incident_models import HouseIncident
 from .lost_models import LostItem,ItemClaim
-from .house_schemas import ZoneInput,PostInput,IncidentInput,DispatchInput,ResolutionInput,LostInput,ClaimInput
+from .house_schemas import ZoneInput,PostInput,ClosurePlanInput,IncidentInput,DispatchInput,ResolutionInput,LostInput,ClaimInput
 from .services import pack
 from . import zones_service as zones,incidents_service as incidents,lost_service as lost
 router=APIRouter()
@@ -33,6 +33,14 @@ def resolve(id:int,d:ResolutionInput,s=Depends(db_session),u=Depends(writers)):
 @router.post('/house-incidents/{id}/close')
 def close(id:int,s=Depends(db_session),u=Depends(admin)):
     x=incidents.close(s,id,u);s.commit();return x
+@router.get('/zone-closure-plans')
+def list_plans(s=Depends(db_session),u=Depends(current)):return [zones.plan_view(s,x) for x in s.scalars(select(ZoneClosurePlan).order_by(ZoneClosurePlan.id.desc()))]
+@router.post('/zone-closure-plans')
+def plan(d:ClosurePlanInput,s=Depends(db_session),u=Depends(admin)):
+    x=zones.plan_create(s,d,u);s.commit();return x
+@router.post('/zone-closure-plans/{id}/activate')
+def activate(id:int,s=Depends(db_session),u=Depends(admin)):
+    x=zones.plan_activate(s,id,u);s.commit();return x
 @router.get('/lost-items')
 def items(s=Depends(db_session),u=Depends(current)):return [lost.view(x,u) for x in s.scalars(select(LostItem).order_by(LostItem.id.desc()))]
 @router.post('/lost-items')
